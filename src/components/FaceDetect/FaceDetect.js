@@ -1,15 +1,18 @@
 import React from 'react';
+import './FaceDetect.css';
 
-const FaceDetect = ({ imageURL }) => {
+const FaceDetect = ({ imageURL, box }) => {
   return(
     <div className='center ma'>
       <div className='absolute mt2'>
         <img
-          alt='daface'
+          id='inputimg'
+          alt=''
           src={imageURL}
           width='500'
           height='auto'
         />
+        <div className='bounding-box' style={{top: box.topRow, right: box.rightCol, bottom: box.bottomRow, left: box.leftCol}}></div>
       </div>
     </div>
   );
