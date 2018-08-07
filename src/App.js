@@ -27,6 +27,13 @@ const app = new Clarifai.App({
 });
 
 class App extends Component {
+  /*
+  Need- image input URL for user to type in
+  submitted image URL to capture URL when user presses 'Detect'
+  box to get parameters of bounding bax for face detection
+  route- think as a FSM with states signin, signout, home, signup
+  isSignedIn- boolean to check if user is signed in or not to display signout/signup signup
+  */
   constructor() {
     super()
     this.state = {
@@ -38,6 +45,7 @@ class App extends Component {
     }
   }
 
+  // change inputurl to be whatever is in searchbox
   onInputChange = (event) => {
     this.setState({inputurl: event.target.value});
   }
@@ -45,10 +53,11 @@ class App extends Component {
 
   calculateFaceLocation = (data) => {
     const face = data.outputs[0].data.regions[0].region_info.bounding_box;
+    /* grab the image from FaceDetect.js since it is added to the DOM tree and calculate the
+    coordinates for the box*/
     const image = document.getElementById('inputimg');
     const width = Number(image.width);
     const height = Number(image.height);
-    console.log(width, height);
     return{
       leftCol: face.left_col*width,
       topRow: face.top_row*height,
@@ -57,12 +66,15 @@ class App extends Component {
     }
   }
 
+  // create the box coordinates for the face
   createFaceBox = (box) => {
     console.log(box);
     this.setState({box: box});
   }
 
-
+  /*on clicking the mouse fetch the API
+  calculate the coordinates from the response we get
+  create the box based off those coordinates*/
   onClick = () => {
     this.setState({submittedImage: this.state.inputurl})
     app.models.predict(Clarifai.FACE_DETECT_MODEL, this.state.inputurl)
@@ -74,6 +86,8 @@ class App extends Component {
     });
   }
 
+  /*Change if we are signed out or in based off the route FSM and also Change
+  where we are in the route FSM here*/
   onRouteChange = (route) => {
     if (route === 'signout') {
       this.setState({isSignedIn: false})
