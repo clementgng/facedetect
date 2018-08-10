@@ -41,15 +41,43 @@ class App extends Component {
       submittedImage: '',
       box: {},
       route: 'signin',
-      isSignedIn: false
+      isSignedIn: false,
+      user: { // create user profile
+        id: '',
+        name: '',
+        email: '',
+        entries: 0,
+        joined: ''
+      }
     }
   }
+
+  /*componentDidMount() {
+    fetch('http://localhost:3001')
+      .then(response => {
+        return response.json()
+      })
+      .then(data => {
+        console.log(data);
+      })
+  }*/
 
   // change inputurl to be whatever is in searchbox
   onInputChange = (event) => {
     this.setState({inputurl: event.target.value});
   }
 
+  loadUser = (userInfo) => {
+    this.setState({
+      user: {
+        id: userInfo.id,
+        name: userInfo.name,
+        email: userInfo.email,
+        entries: userInfo.entries,
+        joined: userInfo.joined
+      }
+    })
+  }
 
   calculateFaceLocation = (data) => {
     const face = data.outputs[0].data.regions[0].region_info.bounding_box;
@@ -75,10 +103,26 @@ class App extends Component {
   /*on clicking the mouse fetch the API
   calculate the coordinates from the response we get
   create the box based off those coordinates*/
-  onClick = () => {
+  onClickedDetect = () => {
     this.setState({submittedImage: this.state.inputurl})
     app.models.predict(Clarifai.FACE_DETECT_MODEL, this.state.inputurl)
     .then((response) => {
+        if (response) {
+          fetch('http://localhost:3001/image', {
+            method: 'put',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+              id: this.state.user.id
+            })
+          })
+          .then(response => response.json())
+          .then(count => {
+            // this.state.user is the target Object
+            // update entries key with count value in target object 
+            this.setState(Object.assign(this.state.user, { entries: count }))
+          })
+
+        }
         this.createFaceBox(this.calculateFaceLocation(response));
     })
     .catch((err) => {
@@ -98,7 +142,7 @@ class App extends Component {
   }
 
   render() {
-    const { isSignedIn, submittedImage, box, route} = this.state
+    const { isSignedIn, submittedImage, box, route, user} = this.state
     return (
       <div className="App">
         <Particles className='particles'
@@ -108,19 +152,19 @@ class App extends Component {
         { route === 'home'
           ? <div>
             <Logo />
-            <Rank />
-            <InputLink inputText={this.onInputChange} clickedButton={this.onClick}/>
+            <Rank name={user.name} entries={user.entries}/>
+            <InputLink inputText={this.onInputChange} clickedDetect={this.onClickedDetect}/>
             <FaceDetect box={box} imageURL={submittedImage}/>
           </div>
           : (
             route === 'signin' || route === 'signout'
             ? <div>
                 <Logo />
-                <SignIn isSignedIn={isSignedIn} onRouteChange={this.onRouteChange}/>
+                <SignIn loadUser={this.loadUser} isSignedIn={isSignedIn} onRouteChange={this.onRouteChange}/>
             </div>
             : <div>
                 <Logo />
-                <Register onRouteChange={this.onRouteChange}/>
+                <Register loadUser={this.loadUser} onRouteChange={this.onRouteChange}/>
             </div>
         )
 

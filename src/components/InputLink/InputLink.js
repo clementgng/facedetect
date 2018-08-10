@@ -1,7 +1,7 @@
 import React from 'react';
 import './InputLinkBG.css';
 
-const InputLink = ({ inputText, clickedButton }) => {
+const InputLink = ({ inputText, clickedDetect }) => {
   return(
     <div>
       <p className='f3'>
@@ -16,7 +16,7 @@ const InputLink = ({ inputText, clickedButton }) => {
             onChange={inputText}
           />
           <button
-            onClick={clickedButton}
+            onClick={clickedDetect}
             className='pa3 w-30 grow f3 link ph3 pv2 dib white bg-light-purple shadow-5'>Detect</button>
         </div>
       </div>
