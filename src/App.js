@@ -6,7 +6,6 @@ import InputLink from './components/InputLink/InputLink';
 import SignIn from './components/SignIn/SignIn';
 import Rank from './components/Rank/Rank';
 import Particles from 'react-particles-js';
-import Clarifai from 'clarifai';
 import FaceDetect from './components/FaceDetect/FaceDetect';
 import Register from './components/SignUp/Register';
 
@@ -22,9 +21,20 @@ const particlesOptions = {
   }
 }
 
-const app = new Clarifai.App({
-  apiKey: '66684afaa11e4d89ada0d60bbdb3245c'
-});
+const initialState = {
+  inputurl: '',
+  submittedImage: '',
+  box: {},
+  route: 'signin',
+  isSignedIn: false,
+  user: { // create user profile
+    id: '',
+    name: '',
+    email: '',
+    entries: 0,
+    joined: ''
+  }
+};
 
 class App extends Component {
   /*
@@ -105,7 +115,14 @@ class App extends Component {
   create the box based off those coordinates*/
   onClickedDetect = () => {
     this.setState({submittedImage: this.state.inputurl})
-    app.models.predict(Clarifai.FACE_DETECT_MODEL, this.state.inputurl)
+    fetch('http://localhost:3001/imageurl', {
+      method: 'post',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        inputurl: this.state.inputurl
+      })
+    })
+    .then(response => response.json())
     .then((response) => {
         if (response) {
           fetch('http://localhost:3001/image', {
@@ -118,10 +135,12 @@ class App extends Component {
           .then(response => response.json())
           .then(count => {
             // this.state.user is the target Object
-            // update entries key with count value in target object 
+            // update entries key with count value in target object
             this.setState(Object.assign(this.state.user, { entries: count }))
           })
-
+          .catch(err => {
+            console.log(err);
+          })
         }
         this.createFaceBox(this.calculateFaceLocation(response));
     })
@@ -134,7 +153,7 @@ class App extends Component {
   where we are in the route FSM here*/
   onRouteChange = (route) => {
     if (route === 'signout') {
-      this.setState({isSignedIn: false})
+      this.setState(initialState)
     } else if (route === 'home') {
       this.setState({isSignedIn: true})
     }

@@ -31,16 +31,17 @@ class Register extends React.Component {
     })
     .then(response => response.json())
     .then(user => {
-      if (user) {
+      if (user.id) {
         // update user profile on frontend
         this.props.loadUser(user);
         this.props.onRouteChange('home');
       }
     })
+    .catch(err => console.log(err))
   }
   render() {
-    const selfprop = this.props;
-    const {onRouteChange} = selfprop;
+    // const selfprop = this.props;
+    // const {onRouteChange} = selfprop;
     return(
       <article className="br3 ba dark-gray b--black-10 mv4 w-100 w-50-m w-25-l mw5 shadow-5 center">
         <main className="pa4 black-80">
