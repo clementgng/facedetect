@@ -115,6 +115,7 @@ class App extends Component {
   calculate the coordinates from the response we get
   create the box based off those coordinates*/
   onClickedDetect = () => {
+    this.setState({box: {}})
     this.setState({submittedImage: this.state.inputurl})
     fetch('https://morning-wave-55083.herokuapp.com/imageurl', {
       method: 'post',
@@ -146,7 +147,6 @@ class App extends Component {
           console.log('here')
           this.createFaceBox(this.calculateFaceLocation(response));
         } else {
-          this.setState({box: {}})
           console.log('Could not detect face');
         }
 
