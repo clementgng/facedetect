@@ -143,6 +143,7 @@ class App extends Component {
           .catch(err => {
             console.log(err);
           })
+          console.log('here')
           this.createFaceBox(this.calculateFaceLocation(response));
         } else {
           console.log('Could not detect face');
