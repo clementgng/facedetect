@@ -125,6 +125,7 @@ class App extends Component {
     })
     .then(response => response.json())
     .then((response) => {
+        console.log('response', response)
         if (response) {
           fetch('https://morning-wave-55083.herokuapp.com/image', {
             method: 'put',
