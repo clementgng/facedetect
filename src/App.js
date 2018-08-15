@@ -146,6 +146,7 @@ class App extends Component {
           console.log('here')
           this.createFaceBox(this.calculateFaceLocation(response));
         } else {
+          this.setState({box: {}})
           console.log('Could not detect face');
         }
 
