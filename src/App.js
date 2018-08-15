@@ -126,7 +126,7 @@ class App extends Component {
     .then(response => response.json())
     .then((response) => {
         console.log('response', response)
-        if (response) {
+        if (typeof response === 'object') {
           fetch('https://morning-wave-55083.herokuapp.com/image', {
             method: 'put',
             headers: {'Content-Type': 'application/json'},
@@ -144,6 +144,8 @@ class App extends Component {
             console.log(err);
           })
           this.createFaceBox(this.calculateFaceLocation(response));
+        } else {
+          console.log('Could not detect face');
         }
 
     })
