@@ -90,6 +90,7 @@ class App extends Component {
   }
 
   calculateFaceLocation = (data) => {
+    console.log(data);
     const face = data.outputs[0].data.regions[0].region_info.bounding_box;
     /* grab the image from FaceDetect.js since it is added to the DOM tree and calculate the
     coordinates for the box*/
@@ -141,8 +142,9 @@ class App extends Component {
           .catch(err => {
             console.log(err);
           })
+          this.createFaceBox(this.calculateFaceLocation(response));
         }
-        this.createFaceBox(this.calculateFaceLocation(response));
+
     })
     .catch((err) => {
       console.log(err);
